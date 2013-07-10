@@ -8,7 +8,7 @@ AdCanny::AdCanny(void)
 
 /*
 this algorithm is changged canny,after compute the grad(x,y,z) then use the  directions(8*2 0π) and the grad to filter the image  
-1、guass filter 
+1、guass filter 1d
 2、compute the x,y,z,diffrerention store in three images
 3、compute the tan=deta y /detax;include 8 directions 0,45 90 135 180 225 270 315 360
 4、vlue+= vr *grad + vl *grad;
@@ -18,7 +18,20 @@ output:
 
 
 */
-//  一维高斯分布函数，用于平滑函数中生成的高斯滤波系数
+
+
+/*
+2.高斯滤波器的kernel是可分离的(separable)，也就是说，可以将2D的高斯kernel分解为两个1D的kernel，
+先沿x方向对图像进行1D高斯kernel的卷积，然后沿y方向对图像进行1D的高斯kernel卷积，
+最后的结果和使用一个2D高斯kernel对图像卷积效果是一样的。这样一来，针对每个像素，滤波器的算法复杂度降为O(r)。
+ 一维高斯分布函数，用于平滑函数中生成的高斯滤波系数 ,也可以用而为高斯函数，甚至三维高斯函数，效果有待比较
+
+ */ 
+
+
+/*intput:sigma正态分布的方差，pdKernel 存放高斯系数的数组，
+
+*/
 void CreatGauss(double sigma, double **pdKernel, int *pnWidowSize)
 {
  
@@ -136,9 +149,14 @@ void GaussianSmooth(SIZE sz, LPBYTE pGray, LPBYTE pResult, double sigma)
 }
  
 // 方向导数,求梯度
-void Grad(SIZE sz, LPBYTE pGray,int *pGradX, int *pGradY, int *pMag)
+/*
+input:SIZE sz, LPBYTE pGray,int *pGradX, int *pGradY, int pGradz,int *pMag
+
+
+*/
+void Grad(SIZE sz, LPBYTE pGray,int *pGradX, int *pGradY,int *pGradZ, int *pMag)
 {
- LONG y,x;
+ LONG y,x,z;
  
  //x方向的方向导数
  for(y=1;y<sz.cy-1;y++)
@@ -159,7 +177,9 @@ void Grad(SIZE sz, LPBYTE pGray,int *pGradX, int *pGradY, int *pMag)
  }
  
  //求梯度
- 
+ //z方向 方向导数
+
+
  //中间变量
  double dSqt1;
  double dSqt2;
@@ -176,6 +196,44 @@ void Grad(SIZE sz, LPBYTE pGray,int *pGradX, int *pGradY, int *pMag)
   }
  }
 }
+void Direction(SIZE sz, LPBYTE pGray,int *pGradX, int *pGradY,int *pMag,int *tan )
+{
+	float *tan;
+	int i;
+	for(i=1;i<sz.cx-1;i++)
+	{
+		tan[i]=pGradY[i]/pGradX[i];
+	}
+	switch (tan[i])
+	{
+	case 1
+		tan[i]=1;break;
+	case 2
+		tan[i]=2;break;
+	case 3
+		tan[i]=3;break;
+	default
+	}
+}
+/*
+input:
+function:value+=
+*/
+
+
+
+void Value(SIZE sz,int *tan,int *pMag,LPBYTE* pGray)
+{
+	LPBYTE value=pGray;
+	
+	int i=1;
+	for(i=0;i<sz.cx-1;i++)
+	{
+		value[i]+=
+	}
+	
+}
+
 AdCanny::~AdCanny(void)
 {
 }
